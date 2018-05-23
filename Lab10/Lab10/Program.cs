@@ -5,10 +5,14 @@ using System.Text;
 using System.Threading.Tasks;
 using ClassLibrary1;
 using System.Reflection;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.IO;
+
 
 
 namespace Lab10
 {
+    [Serializable]
     class Program
     {
         // BONUS1
@@ -17,6 +21,13 @@ namespace Lab10
         // este progrma corre porque no edita sobre el address de la persona sino que de una adress x al igual que la persona con sus padres y si  pido direccion de una persona para editar   no me dejaria usarla por que en person la adress es private y viceversa 
         static void Main(string[] args)
         {
+            Serializationzz seria;
+            BinaryFormatter bif = new BinaryFormatter();
+            FileStream fis = File.Open("Datos.bin", FileMode.Open);
+            seria = (Serializationzz)bif.Deserialize(fis);
+            fis.Close();
+
+           
             DateTime date = new DateTime(1997, 9, 9);
             ClassLibrary1.Person person = new Person("rai","marlyn",date,null,"1267889", null, null);
             // el alma mater no esta en el constructor yes solo lectura, no se puede escribir al igual que 
@@ -47,7 +58,7 @@ namespace Lab10
             List<Car> autos = new List<Car>();
             while (boliano)
             {
-                Console.WriteLine("Ingrese opcion\n (1)registrar vehiculo a tu nombre\n (2)registro de persona\n (3)registrar direccion\n ");
+                Console.WriteLine("Ingrese opcion\n (1)registrar vehiculo \n (2)registro de persona\n (3)registrar direccion\n (4) salir ");
                 opcion= Console.ReadLine();
                 if (opcion == "1")
                 {
@@ -81,6 +92,30 @@ namespace Lab10
                     }
                     else if (opcc == "2")
                     {
+                        Console.WriteLine("Oops se nos olvido como era tu auto porfavor ingresar los datos del auto");
+                        Console.WriteLine("marca:");
+                        string mar = Console.ReadLine();
+                        Console.WriteLine("modelo:");
+                        string model = Console.ReadLine();
+                        Console.WriteLine("año:");
+                        int año = Convert.ToInt32(Console.ReadLine());
+                        Console.WriteLine("patente:");
+                        string petente = Console.ReadLine();
+                        Console.WriteLine("cinturones");
+                        int cint = Convert.ToInt32(Console.ReadLine());
+                        Console.WriteLine("diesel (1)SI  (2)NO");
+                        string dis = Console.ReadLine();
+                        bool diss;
+                        if (dis == "1")
+                        {
+                            diss = true;
+                        }
+                        else
+                        {
+                            diss = false;
+                        }
+                        Car c = new Car(mar, model, año, personilla, petente, cint, diss);
+                        autos.Add(c);
                         Console.WriteLine(" a quien desea pasarle el auto");
                         foreach (Person item in personas)
                         {
@@ -95,6 +130,7 @@ namespace Lab10
                             if (item.Last_name == ep && item.First_name == nombrin)
                             {
                                 car.giveUpOwnershipToThirdParty(item);
+                                Console.WriteLine("auto traspasado con exito");
                             }
                         }
                     }
@@ -129,13 +165,23 @@ namespace Lab10
                     }
                     else if (opcionn == "4")
                     {
-                        
-                        Console.WriteLine("ers un niño adoptado adoptado");
-                        personilla.getAdopted(person);
+                        Console.WriteLine("nombre del apoderado:");
+                        string nombre1 = Console.ReadLine();
+                        Console.WriteLine("apellido del apoderado:");
+                        string apellid = Console.ReadLine();
+                        Console.WriteLine("rut del apoderado:");
+                        string rutt = Console.ReadLine();
+                        Console.WriteLine("nacimiento del apoderado:");
+                        string nacimiento = Console.ReadLine();
+                        DateTime date11 = DateTime.ParseExact(nacimineto, "yyyy-MM-dd HH:mm:ss,fff", System.Globalization.CultureInfo.InvariantCulture);
+                        Person pers = new Person(nombre1, apellid, date11, null, rutt, personilla, null);
+                        personas.Add(pers);
+                        Console.WriteLine("haz sido adoptado por " + pers.First_name);
+                        personilla.getAdopted(pers);
                     }
                     else if (opcionn == "5")
                     {
-                        
+                        Console.WriteLine("personas a quines puedes traspasarle tus cosas");
                         foreach (Person item in personas)
                         {
                             Console.WriteLine(item.First_name + " " + item.Last_name + " \n");
@@ -149,6 +195,7 @@ namespace Lab10
                             if (item.Last_name == ep && item.First_name== nombrin)
                             {
                                 person.giveUpOwnershipToThirdParty(item);
+                                Console.WriteLine("traspaso con exito!");
                             }
                         }
 
@@ -235,6 +282,48 @@ namespace Lab10
                     }
                     else if (op=="2")
                     {
+                        //como no podia llegar al usuario de la addres tuve que pedir los datos denuevo
+                        Console.WriteLine("Ops se nos olvido tu direccion porfavor rellenar los siguientes datos");
+                        Console.WriteLine("calle:");
+                        string calle = Console.ReadLine();
+                        Console.WriteLine("comuna:");
+                        string comuna = Console.ReadLine();
+                        Console.WriteLine("ciudad:");
+                        string city = Console.ReadLine();
+                        Console.WriteLine("numero de la casa:");
+                        int num = Convert.ToInt32(Console.ReadLine());
+                        Console.WriteLine("año de construccion:");
+                        int año = Convert.ToInt32(Console.ReadLine());
+                        Console.WriteLine("piezas:");
+                        int pi = Convert.ToInt32(Console.ReadLine());
+                        Console.WriteLine("baños:");
+                        int baño = Convert.ToInt32(Console.ReadLine());
+                        Console.WriteLine("tiene jardin (1)SI (2)NO");
+                        string j = Console.ReadLine();
+                        bool jardin;
+                        if (j == "1")
+                        {
+                            jardin = true;
+                        }
+                        else
+                        {
+                            jardin = false;
+                        }
+                        Console.WriteLine("tiene pisina (1)SI (2)NO");
+                        string pis = Console.ReadLine();
+                        bool piss;
+                        if (pis == "1")
+                        {
+                            piss = true;
+                        }
+                        else
+                        {
+                            piss = false;
+                        }
+
+
+                        Address a = new Address(calle, num, comuna, city, personilla, año, pi, baño, jardin, piss);
+                        direcciones.Add(a);
                         foreach (Person item in personas)
                         {
                             Console.WriteLine(item.First_name + " " + item.Last_name + " \n");
@@ -247,31 +336,122 @@ namespace Lab10
                         {
                             if (item.Last_name == ep && item.First_name == nombrin)
                             {
-                                address.changeOwner(item);
+                                a.changeOwner(item);
                             }
                         }
                     }
                     else if (op == "3")
                     {
+                        //como no podia llegar al usuario de la addres tuve que pedir los datos denuevo
+                        Console.WriteLine("Ops se nos olvido tu direccion porfavor rellenar los siguientes datos");
+                        Console.WriteLine("calle:");
+                        string calle = Console.ReadLine();
+                        Console.WriteLine("comuna:");
+                        string comuna = Console.ReadLine();
+                        Console.WriteLine("ciudad:");
+                        string city = Console.ReadLine();
+                        Console.WriteLine("numero de la casa:");
+                        int num = Convert.ToInt32(Console.ReadLine());
+                        Console.WriteLine("año de construccion:");
+                        int año = Convert.ToInt32(Console.ReadLine());
+                        Console.WriteLine("piezas:");
+                        int pi = Convert.ToInt32(Console.ReadLine());
+                        Console.WriteLine("baños:");
+                        int baño = Convert.ToInt32(Console.ReadLine());
+                        Console.WriteLine("tiene jardin (1)SI (2)NO");
+                        string j = Console.ReadLine();
+                        bool jardin;
+                        if (j == "1")
+                        {
+                            jardin = true;
+                        }
+                        else
+                        {
+                            jardin = false;
+                        }
+                        Console.WriteLine("tiene pisina (1)SI (2)NO");
+                        string pis = Console.ReadLine();
+                        bool piss;
+                        if (pis == "1")
+                        {
+                            piss = true;
+                        }
+                        else
+                        {
+                            piss = false;
+                        }
+                        Address a = new Address(calle, num, comuna, city, personilla, año, pi, baño, jardin, piss);
+                        direcciones.Add(a);
                         Console.WriteLine("cuantas pieza desea agregar");
                         int cint = Convert.ToInt32(Console.ReadLine());
-                        address.addBeedrooms(cint);
+                        a.addBeedrooms(cint);
 
                     }
                     else if (op == "4")
                     {
+                        //como no podia llegar al usuario de la addres tuve que pedir los datos denuevo
+                        Console.WriteLine("Ops se nos olvido tu direccion porfavor rellenar los siguientes datos");
+                        Console.WriteLine("calle:");
+                        string calle = Console.ReadLine();
+                        Console.WriteLine("comuna:");
+                        string comuna = Console.ReadLine();
+                        Console.WriteLine("ciudad:");
+                        string city = Console.ReadLine();
+                        Console.WriteLine("numero de la casa:");
+                        int num = Convert.ToInt32(Console.ReadLine());
+                        Console.WriteLine("año de construccion:");
+                        int año = Convert.ToInt32(Console.ReadLine());
+                        Console.WriteLine("piezas:");
+                        int pi = Convert.ToInt32(Console.ReadLine());
+                        Console.WriteLine("baños:");
+                        int baño = Convert.ToInt32(Console.ReadLine());
+                        Console.WriteLine("tiene jardin (1)SI (2)NO");
+                        string j = Console.ReadLine();
+                        bool jardin;
+                        if (j == "1")
+                        {
+                            jardin = true;
+                        }
+                        else
+                        {
+                            jardin = false;
+                        }
+                        Console.WriteLine("tiene pisina (1)SI (2)NO");
+                        string pis = Console.ReadLine();
+                        bool piss;
+                        if (pis == "1")
+                        {
+                            piss = true;
+                        }
+                        else
+                        {
+                            piss = false;
+                        }
+
+
+                        Address a = new Address(calle, num, comuna, city, personilla, año, pi, baño, jardin, piss);
+                        direcciones.Add(a);
                         Console.WriteLine("cuantas pieza desea agregar");
                         int cint = Convert.ToInt32(Console.ReadLine());
-                        address.addBathrooms(cint);
+                        a.addBathrooms(cint);
                     }
                     else {
                         Console.WriteLine("opcion incorrecta");
                     }
                 }
+                else if (opcion=="4")
+                {
+                    BinaryFormatter bf = new BinaryFormatter();
+                    FileStream fs = File.Open("Datos.bin", FileMode.OpenOrCreate);
+                    bf.Serialize(fs, seria);
+                    fs.Close();
+                    break;
+                }
                 else 
                 {
                     Console.WriteLine("numero incorrecto ingrese denuevo");
                 }
+
 
             }
 
